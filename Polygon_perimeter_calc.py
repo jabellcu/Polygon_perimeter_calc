@@ -48,7 +48,11 @@ class sketch_window(object):
         self.c.create_line(*p1, *p2, width=self.line_width, fill=self.color)
 
     def show_perimeter(self):
-        msg = 'Perimeter: {:.2f}'.format(self.polygon.perimeter.evalf())
+        perimeter = self.polygon.perimeter.evalf()
+        area = abs(self.polygon.area.evalf())
+        msg = 'Perimeter: {:.2f}'.format(perimeter)
+        msg += '\n Area: {:.2f}'.format(area)
+
         self.c.create_text(*self.polygon.centroid.evalf(), text=msg, fill='white')
 
 if __name__ == '__main__':
