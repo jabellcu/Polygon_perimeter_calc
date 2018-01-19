@@ -1,7 +1,7 @@
 from tkinter import *
 from collections import namedtuple
+from sympy.geometry import *
 
-point = namedtuple('point', ['x', 'y'])
 
 class sketch_window(object):
 
@@ -23,17 +23,17 @@ class sketch_window(object):
         self.c.bind('<Button-1>', self.click)
         self.c.bind('<Double-Button-1>', self.close_polygon)
         self.points = []
-        self.polygon_closed = False
+        self.polygon = None
 
     def reset(self):
         self.setup()
         self.c.delete("all")
 
     def click(self, event):
-        if self.polygon_closed:
+        if self.polygon:
             self.reset()
         else:
-            pt = point(event.x, event.y)
+            pt = Point(event.x, event.y)
             self.points.append(pt)
             if len(self.points) > 1:
                 self.draw_line(*self.points[-2:])
@@ -41,10 +41,15 @@ class sketch_window(object):
     def close_polygon(self, event):
         self.click(event)
         self.draw_line(self.points[0], self.points[-1])
-        self.polygon_closed = True
+        self.polygon = Polygon(*self.points)
+        self.show_perimeter()
 
     def draw_line(self, p1, p2):
         self.c.create_line(*p1, *p2, width=self.line_width, fill=self.color)
+
+    def show_perimeter(self):
+        msg = 'Perimeter: {:.2f}'.format(self.polygon.perimeter.evalf())
+        self.c.create_text(*self.polygon.centroid.evalf(), text=msg, fill='white')
 
 if __name__ == '__main__':
     sketch_window()
